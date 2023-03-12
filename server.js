@@ -332,36 +332,37 @@ updateEmployeeRole = () => {
   });
 }
 
-viewEmployeesByManager = () => {
-  const sql = `
-    SELECT CONCAT(m.first_name, ' ', m.last_name) AS manager_name, e.id, e.first_name, e.last_name, r.title AS job_title, d.name AS department, r.salary
-    FROM employees e
-    JOIN roles r ON e.role_id = r.id
-    JOIN departments d ON r.department_id = d.id
-    JOIN employees m ON e.manager_id = m.id
-  `;
+viewEmployeesByManager = async () => {
+  try {
+    const [rows, fields] = await db.promise().query(`
+      SELECT CONCAT(m.first_name, ' ', m.last_name) AS manager_name, e.id, e.first_name, e.last_name, r.title AS job_title, d.name AS department, r.salary
+      FROM employees e
+      JOIN roles r ON e.role_id = r.id
+      JOIN departments d ON r.department_id = d.id
+      JOIN employees m ON e.manager_id = m.id
+    `);
 
-  db.query(sql, (err, results) => {
-    if (err) throw err;
+    const managers = [...new Set(rows.map(employee => employee.manager_name))];
 
-    const managers = [...new Set(results.map(employee => employee.manager_name))];
-
-    inquirer.prompt([
+    const answers = await inquirer.prompt([
       {
         type: 'list',
         name: 'manager',
         message: 'Select a manager to view their employees:',
         choices: managers
       }
-    ]).then(answers => {
-      const filteredResults = results.filter(employee => employee.manager_name === answers.manager);
-      console.log("\n-----------------------------------------\n");
-      console.log(`Employees reporting to ${answers.manager}:`);
-      console.table(filteredResults);
-      console.log("\n-----------------------------------------\n");
-      promptUser();
-    });
-  });
+    ]);
+
+    const filteredResults = rows.filter(employee => employee.manager_name === answers.manager);
+    console.log("\n-----------------------------------------\n");
+    console.log(`Employees reporting to ${answers.manager}:`);
+    console.table(filteredResults);
+    console.log("\n-----------------------------------------\n");
+    promptUser();
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
 
 viewEmployeesByDepartment = () => {
