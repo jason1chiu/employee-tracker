@@ -104,6 +104,16 @@ viewAllDepartments = () => {
   });
 }
 
+viewAllRoles = () => {
+  const sql = `SELECT roles.id, roles.title, departments.name AS department, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id`;
+  db.query(sql, function (err, results) {
+    if (err) throw err;
+    console.log("\n-----------------------------------------\n");
+    console.table(results);
+    promptUser();
+  });
+}
+
 // Default response for any other request (Not Found)
 app.use((req, res) => {
   res.status(404).end();
