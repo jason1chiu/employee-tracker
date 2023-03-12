@@ -94,6 +94,16 @@ const promptUser = () => {
 
 promptUser();
 
+viewAllDepartments = () => {
+  const sql = `SELECT * FROM departments`;
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+    console.log("\n-----------------------------------------\n");
+    console.table(results);
+    promptUser();
+  });
+}
+
 // Default response for any other request (Not Found)
 app.use((req, res) => {
   res.status(404).end();
