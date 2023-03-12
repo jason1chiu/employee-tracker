@@ -14,7 +14,7 @@ const db = mysql.createConnection(
     host: '127.0.0.1',
     user: 'root',
     password: '',
-    database: 'employees_db'
+    database: 'employees_db',
   }
 );
 
@@ -96,13 +96,18 @@ promptUser();
 
 viewAllDepartments = () => {
   const sql = `SELECT * FROM departments`;
-  db.query(sql, (err, results) => {
-    if (err) throw err;
-    console.log("\n-----------------------------------------\n");
-    console.table(results);
-    promptUser();
-  });
+  db.promise().query(sql)
+    .then(([rows, fields]) => {
+      console.log("\n-----------------------------------------\n");
+      console.table(rows);
+      promptUser();
+    })
+    .catch((err) => {
+      console.log(err);
+      db.end();
+    });
 }
+
 
 viewAllRoles = () => {
   const sql = `SELECT roles.id, roles.title, departments.name AS department, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id`;
