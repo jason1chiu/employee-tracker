@@ -213,17 +213,15 @@ addRole = async () => {
   }
 }
 
-addEmployee = () => {
-  const sql = `
-    SELECT r.id, r.title, r.salary, CONCAT(e.first_name, ' ', e.last_name) AS manager_name
-    FROM roles r
-    LEFT JOIN employees e ON r.id = e.role_id
-  `;
+addEmployee = async () => {
+  try {
+    const [rows, fields] = await db.promise().query(`
+      SELECT r.id, r.title, r.salary, CONCAT(e.first_name, ' ', e.last_name) AS manager_name
+      FROM roles r
+      LEFT JOIN employees e ON r.id = e.role_id
+    `);
 
-  db.query(sql, (err, results) => {
-    if (err) throw err;
-
-    inquirer.prompt([
+    const answers = await inquirer.prompt([
       {
         type: 'input',
         name: 'firstName',
@@ -250,7 +248,7 @@ addEmployee = () => {
         type: 'list',
         name: 'roleId',
         message: 'Select the role for the new employee:',
-        choices: results.map(role => {
+        choices: rows.map(role => {
           return {
             name: `${role.title} (Salary: ${role.salary})`,
             value: role.id
@@ -266,7 +264,7 @@ addEmployee = () => {
             name: 'None',
             value: null
           },
-          ...results.filter(role => role.manager_name !== null).map(role => {
+          ...rows.filter(role => role.manager_name !== null).map(role => {
             return {
               name: role.manager_name,
               value: role.id
@@ -274,17 +272,18 @@ addEmployee = () => {
           })
         ]
       }
-    ]).then(answers => {
-      const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
-      db.query(sql, [answers.firstName, answers.lastName, answers.roleId, answers.managerId], function (err, result) {
-        if (err) throw err;
-        console.log("\n-----------------------------------------\n");
-        console.log(`${answers.firstName} ${answers.lastName} has been added as a new employee with ID ${result.insertId}.`);
-        console.log("\n-----------------------------------------\n");
-        promptUser();
-      });
-    });
-  });
+    ]);
+
+    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+    const [result] = await db.promise().execute(sql, [answers.firstName, answers.lastName, answers.roleId, answers.managerId]);
+    console.log("\n-----------------------------------------\n");
+    console.log(`${answers.firstName} ${answers.lastName} has been added as a new employee with ID ${result.insertId}.`);
+    console.log("\n-----------------------------------------\n");
+    promptUser();
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
 
 updateEmployeeRole = () => {
