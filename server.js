@@ -286,22 +286,20 @@ addEmployee = async () => {
   }
 }
 
-updateEmployeeRole = () => {
-  const sql = `
-    SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS employee_name, r.id AS role_id, r.title AS role_title
-    FROM employees e
-    LEFT JOIN roles r ON e.role_id = r.id
-  `;
+updateEmployeeRole = async () => {
+  try {
+    const [rows, fields] = await db.promise().query(`
+      SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS employee_name, r.id AS role_id, r.title AS role_title
+      FROM employees e
+      LEFT JOIN roles r ON e.role_id = r.id
+    `);
 
-  db.query(sql, (err, results) => {
-    if (err) throw err;
-
-    inquirer.prompt([
+    const answers = await inquirer.prompt([
       {
         type: 'list',
         name: 'employeeId',
         message: 'Select the employee you want to update:',
-        choices: results.map(employee => {
+        choices: rows.map(employee => {
           return {
             name: employee.employee_name,
             value: employee.id
@@ -312,24 +310,25 @@ updateEmployeeRole = () => {
         type: 'list',
         name: 'roleId',
         message: 'Select the new role for the employee:',
-        choices: results.map(role => {
+        choices: rows.map(role => {
           return {
             name: `${role.role_title}`,
             value: role.role_id
           }
         })
       }
-    ]).then(answers => {
-      const sql = `UPDATE employees SET role_id = ? WHERE id = ?`;
-      db.query(sql, [answers.roleId, answers.employeeId], function (err, result) {
-        if (err) throw err;
-        console.log("\n-----------------------------------------\n");
-        console.log(`Employee with ID ${answers.employeeId} has been updated with new role ID ${answers.roleId}.`);
-        console.log("\n-----------------------------------------\n");
-        promptUser();
-      });
-    });
-  });
+    ]);
+
+    const [result, _] = await db.promise().query(`UPDATE employees SET role_id = ? WHERE id = ?`, [answers.roleId, answers.employeeId]);
+
+    console.log("\n-----------------------------------------\n");
+    console.log(`Employee with ID ${answers.employeeId} has been updated with new role ID ${answers.roleId}.`);
+    console.log("\n-----------------------------------------\n");
+    promptUser();
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
 
 viewEmployeesByManager = async () => {
