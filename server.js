@@ -96,7 +96,6 @@ promptUser();
 
 viewAllDepartments = async () => {
   const sql = `SELECT * FROM departments`;
-
   try {
     const [rows, fields] = await db.promise().query(sql);
     console.log("\n-----------------------------------------\n");
@@ -121,40 +120,47 @@ viewAllRoles = async () => {
   }
 }
 
-viewAllEmployees = () => {
+viewAllEmployees = async () => {
   const sql = `SELECT e.id AS employee_id, e.first_name, e.last_name, r.title AS job_title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager_name FROM employees e LEFT JOIN roles r ON e.role_id = r.id LEFT JOIN departments d ON r.department_id = d.id LEFT JOIN employees m ON e.manager_id = m.id`;
-  db.query(sql, function (err, results) {
-    if (err) throw err;
+  try {
+    const [rows, fields] = await db.promise().query(sql);
     console.log("\n-----------------------------------------\n");
-    console.table(results);
+    console.table(rows);
     promptUser();
-  });
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
 
-addDepartment = () => {
-  inquirer.prompt([
-    {
-      type: 'input',
-      name: 'name',
-      message: 'Enter the name of the new department:',
-      validate: function (input) {
-        if (input.trim() === '') {
-          return 'Please enter a department name.';
+
+addDepartment = async () => {
+  try {
+    const answers = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter the name of the new department:',
+        validate: function (input) {
+          if (input.trim() === '') {
+            return 'Please enter a department name.';
+          }
+          return true;
         }
-        return true;
       }
-    }
-  ]).then(answers => {
+    ]);
     const sql = `INSERT INTO departments (name) VALUES (?)`;
-    db.query(sql, [answers.name], function (err, result) {
-      if (err) throw err;
-      console.log("\n-----------------------------------------\n");
-      console.log(`${answers.name} department has been added with ID ${result.insertId}.`);
-      console.log("\n-----------------------------------------\n");
-      promptUser();
-    });
-  });
+    const [result] = await db.promise().execute(sql, [answers.name]);
+    console.log("\n-----------------------------------------\n");
+    console.log(`${answers.name} department has been added with ID ${result.insertId}.`);
+    console.log("\n-----------------------------------------\n");
+    promptUser();
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
+
 
 addRole = () => {
   const sql = `SELECT * FROM departments`;
