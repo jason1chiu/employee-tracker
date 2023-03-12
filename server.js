@@ -161,14 +161,11 @@ addDepartment = async () => {
   }
 }
 
+addRole = async () => {
+  try {
+    const [rows, fields] = await db.promise().query(`SELECT * FROM departments`);
 
-addRole = () => {
-  const sql = `SELECT * FROM departments`;
-
-  db.query(sql, (err, results) => {
-    if (err) throw err;
-
-    inquirer.prompt([
+    const answers = await inquirer.prompt([
       {
         type: 'input',
         name: 'title',
@@ -195,24 +192,25 @@ addRole = () => {
         type: 'list',
         name: 'departmentId',
         message: 'Select the department for the new role:',
-        choices: results.map(department => {
+        choices: rows.map(department => {
           return {
             name: department.name,
             value: department.id
           }
         })
       }
-    ]).then(answers => {
-      const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
-      db.query(sql, [answers.title, answers.salary, answers.departmentId], function (err, result) {
-        if (err) throw err;
-        console.log("\n-----------------------------------------\n");
-        console.log(`${answers.title} role has been added with ID ${result.insertId}.`);
-        console.log("\n-----------------------------------------\n");
-        promptUser();
-      });
-    });
-  });
+    ]);
+
+    const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
+    const [result] = await db.promise().execute(sql, [answers.title, answers.salary, answers.departmentId]);
+    console.log("\n-----------------------------------------\n");
+    console.log(`${answers.title} role has been added with ID ${result.insertId}.`);
+    console.log("\n-----------------------------------------\n");
+    promptUser();
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
 
 addEmployee = () => {
