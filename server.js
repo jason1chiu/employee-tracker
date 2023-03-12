@@ -94,29 +94,31 @@ const promptUser = () => {
 
 promptUser();
 
-viewAllDepartments = () => {
+viewAllDepartments = async () => {
   const sql = `SELECT * FROM departments`;
-  db.promise().query(sql)
-    .then(([rows, fields]) => {
-      console.log("\n-----------------------------------------\n");
-      console.table(rows);
-      promptUser();
-    })
-    .catch((err) => {
-      console.log(err);
-      db.end();
-    });
+
+  try {
+    const [rows, fields] = await db.promise().query(sql);
+    console.log("\n-----------------------------------------\n");
+    console.table(rows);
+    promptUser();
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
 
-
-viewAllRoles = () => {
+viewAllRoles = async () => {
   const sql = `SELECT roles.id, roles.title, departments.name AS department, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id`;
-  db.query(sql, function (err, results) {
-    if (err) throw err;
+  try {
+    const [rows, fields] = await db.promise().query(sql);
     console.log("\n-----------------------------------------\n");
-    console.table(results);
+    console.table(rows);
     promptUser();
-  });
+  } catch (err) {
+    console.log(err);
+    db.end();
+  }
 }
 
 viewAllEmployees = () => {
