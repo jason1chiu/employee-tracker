@@ -44,7 +44,8 @@ const promptUser = () => {
   ]).then(answers => {
     switch (answers.action) {
       case 'View all departments':
-        viewAllDepartments();
+        const { viewAllDepartments } = require('./helper/viewAllDepartments');
+        viewAllDepartments(db, promptUser);
         break;
       case 'View all roles':
         viewAllRoles();
@@ -94,15 +95,15 @@ const promptUser = () => {
 
 promptUser();
 
-viewAllDepartments = () => {
-  const sql = `SELECT * FROM departments`;
-  db.query(sql, (err, results) => {
-    if (err) throw err;
-    console.log("\n-----------------------------------------\n");
-    console.table(results);
-    promptUser();
-  });
-}
+// viewAllDepartments = () => {
+//   const sql = `SELECT * FROM departments`;
+//   db.query(sql, (err, results) => {
+//     if (err) throw err;
+//     console.log("\n-----------------------------------------\n");
+//     console.table(results);
+//     promptUser();
+//   });
+// }
 
 viewAllRoles = () => {
   const sql = `SELECT roles.id, roles.title, departments.name AS department, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id`;
