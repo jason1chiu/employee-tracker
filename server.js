@@ -80,7 +80,8 @@ const promptUser = () => {
         viewEmployeesByManager(db, promptUser);
         break;        
       case 'Delete a department':
-        deleteDepartment();
+        const { deleteDepartment } = require('./helper/deleteDepartment');
+        deleteDepartment(db, promptUser);
         break;
       case 'Delete a role':
         deleteRole();
