@@ -45,24 +45,45 @@ const promptUser = () => {
       name: 'action',
       message: 'What would you like to do?',
       choices: [
+        'Add a department',
+        'Add an employee',
+        'Add a role',
+        'Delete a department',
+        'Delete a role',
+        'Delete an employee',
+        'Update an employee"s role',
         'View all departments',
         'View all roles',
         'View all employees',
         'View employees by department',
         'View employees by manager',
         'View the total budget of a department',
-        'Add a department',
-        'Add a role',
-        'Add an employee',
-        'Update an employee"s role',
-        'Delete a department',
-        'Delete a role',
-        'Delete an employee',
         'Exit'
       ]
     }
   ]).then(answers => {
     switch (answers.action) {
+      case 'Add a department':
+        addDepartment(db, promptUser);
+        break;
+      case 'Add an employee':
+        addEmployee(db, promptUser);
+        break;
+      case 'Add a role':
+        addRole(db, promptUser);
+        break;
+      case 'Delete a department':
+        deleteDepartment(db, promptUser);
+        break;
+      case 'Delete an employee':
+        deleteEmployee(db, promptUser);
+        break;
+      case 'Delete a role':
+        deleteRole(db, promptUser);
+        break;
+      case 'Update an employee"s role':
+        updateEmployeeRole(db, promptUser);
+        break;
       case 'View all departments':
         viewAllDepartments(db, promptUser);
         break;
@@ -72,33 +93,12 @@ const promptUser = () => {
       case 'View all employees':
         viewAllEmployees(db, promptUser);
         break;
-      case 'Add a department':
-        addDepartment(db, promptUser);
-        break;
-      case 'Add a role':
-        addRole(db, promptUser);
-        break;
-      case 'Add an employee':
-        addEmployee(db, promptUser);
-        break;
-      case 'Update an employee"s role':
-        updateEmployeeRole(db, promptUser);
-        break;
       case 'View employees by department':
         viewEmployeesByDepartment(db, promptUser);
         break;        
       case 'View employees by manager':
         viewEmployeesByManager(db, promptUser);
         break;        
-      case 'Delete a department':
-        deleteDepartment(db, promptUser);
-        break;
-      case 'Delete a role':
-        deleteRole(db, promptUser);
-        break;
-      case 'Delete an employee':
-        deleteEmployee(db, promptUser);
-        break;
       case 'View the total budget of a department':
         viewDepartmentBudget(db, promptUser);
         break;
