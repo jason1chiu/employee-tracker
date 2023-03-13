@@ -28,8 +28,8 @@ const promptUser = () => {
         'View all departments',
         'View all roles',
         'View all employees',
-        'View employees by manager',
         'View employees by department',
+        'View employees by manager',
         'View the total budget of a department',
         'Add a department',
         'Add a role',
@@ -68,14 +68,15 @@ const promptUser = () => {
         addEmployee(db, promptUser);
         break;
       case 'Update an employee"s role':
-          const { updateEmployeeRole } = require('./helper/updateEmployeeRole');
-          updateEmployeeRole(db, promptUser);
-          break;
-      case 'View employees by manager':
-        viewEmployeesByManager();
+        const { updateEmployeeRole } = require('./helper/updateEmployeeRole');
+        updateEmployeeRole(db, promptUser);
         break;
       case 'View employees by department':
-        viewEmployeesByDepartment();
+        const { viewEmployeesByDepartment } = require('./helper/viewEmployeesByDepartment');
+        viewEmployeesByDepartment(db, promptUser);
+        break;        
+      case 'View employees by manager':
+        viewEmployeesByManager();
         break;
       case 'Delete a department':
         deleteDepartment();
