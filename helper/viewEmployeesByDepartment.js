@@ -1,7 +1,11 @@
+// Import the inquirer package
 const inquirer = require('inquirer');
-const consoleTable = require('console.table');
+// Import the console.table package
+const cTable = require('console.table');
 
+// Define a function called viewEmployeesByDepartment that takes two arguments: db (database connection object) and promptUser (a function to prompt the user for more actions)
 const viewEmployeesByDepartment = (db, promptUser) => {
+  // Create a SQL statement to select all employees, their corresponding job titles, departments, salaries, and manager names from a specific department
   const sql = `SELECT e.id AS employee_id, e.first_name, e.last_name, r.title AS job_title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager_name 
               FROM employees e 
               LEFT JOIN roles r ON e.role_id = r.id 
@@ -9,8 +13,10 @@ const viewEmployeesByDepartment = (db, promptUser) => {
               LEFT JOIN employees m ON e.manager_id = m.id 
               WHERE d.name = ?`;
 
+  // Initialize an empty array to hold the list of department names
   const departmentList = [];
 
+  // Retrieve the list of departments from the database and populate the departmentList array with their names
   db.query(`SELECT * FROM departments`, (err, departments) => {
     if (err) {
       console.log(err);
@@ -19,6 +25,7 @@ const viewEmployeesByDepartment = (db, promptUser) => {
 
     departmentList.push(...departments.map(department => department.name));
 
+    // Prompt the user to select a department from the departmentList array
     inquirer.prompt([
       {
         type: 'list',
@@ -27,19 +34,23 @@ const viewEmployeesByDepartment = (db, promptUser) => {
         choices: departmentList
       }
     ]).then(answers => {
+      // Execute the SQL statement with the selected department name to retrieve all employees, their corresponding job titles, departments, salaries, and manager names from that department
       db.query(sql, [answers.department], (err, results) => {
         if (err) {
           console.log(err);
           return;
         }
 
+        // Log the results to the console in a table format using console.table
         console.log("\n-----------------------------------------\n");
         console.table(results);
         console.log("\n-----------------------------------------\n");
+        // Call the promptUser function to prompt the user for more actions
         promptUser();
       });
     });
   });
 };
 
+// Export the viewEmployeesByDepartment function so it can be used in other modules
 module.exports = { viewEmployeesByDepartment };
