@@ -1,7 +1,10 @@
+// import required modules
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const mysql = require('mysql2');
 const express = require('express');
+
+// import helper functions
 const { viewAllDepartments } = require('./helper/viewAllDepartments');
 const { viewAllRoles } = require('./helper/viewAllRoles');
 const { viewAllEmployees } = require('./helper/viewAllEmployees');
@@ -16,12 +19,15 @@ const { deleteRole } = require('./helper/deleteRole');
 const { deleteEmployee } = require('./helper/deleteEmployee');
 const { viewDepartmentBudget } = require('./helper/viewDepartmentBudget');
 
+// set port and create express app
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+// set up middleware for handling url encoded and json data
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
+// create connection to MySQL database
 const db = mysql.createConnection(
   {
     host: '127.0.0.1',
@@ -31,6 +37,7 @@ const db = mysql.createConnection(
   }
 );
 
+// prompt user for action to perform
 const promptUser = () => {
   inquirer.prompt([
     {
