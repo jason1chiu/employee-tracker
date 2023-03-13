@@ -21,6 +21,12 @@ const deleteRole = (db, promptUser) => {
         name: 'role',
         message: 'Which role would you like to delete?',
         choices: roleList
+      },
+      {
+        type: 'confirm',
+        name: 'confirm',
+        message: 'Are you sure you want to delete this role?',
+        default: false
       }
     ]).then(answers => {
       // Find the selected role in the roles array by its title, and get its ID

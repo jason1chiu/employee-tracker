@@ -12,6 +12,7 @@ const { addDepartment } = require('./helper/addDepartment');
 const { addRole } = require('./helper/addRole');
 const { addEmployee } = require('./helper/addEmployee');
 const { updateEmployeeRole } = require('./helper/updateEmployeeRole');
+const { updateEmployeeManager } = require('./helper/updateEmployeeManager');
 const { viewEmployeesByDepartment } = require('./helper/viewEmployeesByDepartment');
 const { viewEmployeesByManager } = require('./helper/viewEmployeesByManager');
 const { deleteDepartment } = require('./helper/deleteDepartment');
@@ -45,18 +46,19 @@ const promptUser = () => {
       name: 'action',
       message: 'What would you like to do?',
       choices: [
-        'Add a department',
-        'Add an employee',
-        'Add a role',
-        'Delete a department',
-        'Delete a role',
-        'Delete an employee',
-        'Update an employee"s role',
         'View all departments',
         'View all roles',
         'View all employees',
-        'View employees by department',
+        'Add a department',
+        'Add a role',
+        'Add an employee',
+        "Update an employee's role",
+        "Update an employee's manager",
         'View employees by manager',
+        'View employees by department',
+        'Delete a department',
+        'Delete a role',
+        'Delete an employee',
         'View the total budget of a department',
         'Exit'
       ]
@@ -81,8 +83,11 @@ const promptUser = () => {
       case 'Delete a role':
         deleteRole(db, promptUser);
         break;
-      case 'Update an employee"s role':
+      case "Update an employee's role":
         updateEmployeeRole(db, promptUser);
+        break;
+      case "Update an employee's manager":
+        updateEmployeeManager(db, promptUser);
         break;
       case 'View all departments':
         viewAllDepartments(db, promptUser);
