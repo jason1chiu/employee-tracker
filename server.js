@@ -68,8 +68,9 @@ const promptUser = () => {
         addEmployee(db, promptUser);
         break;
       case 'Update an employee"s role':
-        updateEmployeeRole();
-        break;
+          const { updateEmployeeRole } = require('./helper/updateEmployeeRole');
+          updateEmployeeRole(db, promptUser);
+          break;
       case 'View employees by manager':
         viewEmployeesByManager();
         break;
