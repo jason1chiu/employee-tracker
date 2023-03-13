@@ -48,10 +48,12 @@ const promptUser = () => {
         viewAllDepartments(db, promptUser);
         break;
       case 'View all roles':
-        viewAllRoles();
+        const { viewAllRoles } = require('./helper/viewAllRoles');
+        viewAllRoles(db, promptUser);
         break;
       case 'View all employees':
-        viewAllEmployees();
+        const { viewAllEmployees } = require('./helper/viewAllEmployees');
+        viewAllEmployees(db, promptUser);
         break;
       case 'Add a department':
         addDepartment();
@@ -94,36 +96,6 @@ const promptUser = () => {
 };
 
 promptUser();
-
-// viewAllDepartments = () => {
-//   const sql = `SELECT * FROM departments`;
-//   db.query(sql, (err, results) => {
-//     if (err) throw err;
-//     console.log("\n-----------------------------------------\n");
-//     console.table(results);
-//     promptUser();
-//   });
-// }
-
-viewAllRoles = () => {
-  const sql = `SELECT roles.id, roles.title, departments.name AS department, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id`;
-  db.query(sql, function (err, results) {
-    if (err) throw err;
-    console.log("\n-----------------------------------------\n");
-    console.table(results);
-    promptUser();
-  });
-}
-
-viewAllEmployees = () => {
-  const sql = `SELECT e.id AS employee_id, e.first_name, e.last_name, r.title AS job_title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager_name FROM employees e LEFT JOIN roles r ON e.role_id = r.id LEFT JOIN departments d ON r.department_id = d.id LEFT JOIN employees m ON e.manager_id = m.id`;
-  db.query(sql, function (err, results) {
-    if (err) throw err;
-    console.log("\n-----------------------------------------\n");
-    console.table(results);
-    promptUser();
-  });
-}
 
 // Default response for any other request (Not Found)
 app.use((req, res) => {
