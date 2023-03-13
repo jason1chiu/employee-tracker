@@ -2,6 +2,19 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 const mysql = require('mysql2');
 const express = require('express');
+const { viewAllDepartments } = require('./helper/viewAllDepartments');
+const { viewAllRoles } = require('./helper/viewAllRoles');
+const { viewAllEmployees } = require('./helper/viewAllEmployees');
+const { addDepartment } = require('./helper/addDepartment');
+const { addRole } = require('./helper/addRole');
+const { addEmployee } = require('./helper/addEmployee');
+const { updateEmployeeRole } = require('./helper/updateEmployeeRole');
+const { viewEmployeesByDepartment } = require('./helper/viewEmployeesByDepartment');
+const { viewEmployeesByManager } = require('./helper/viewEmployeesByManager');
+const { deleteDepartment } = require('./helper/deleteDepartment');
+const { deleteRole } = require('./helper/deleteRole');
+const { deleteEmployee } = require('./helper/deleteEmployee');
+const { viewDepartmentBudget } = require('./helper/viewDepartmentBudget');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -44,55 +57,42 @@ const promptUser = () => {
   ]).then(answers => {
     switch (answers.action) {
       case 'View all departments':
-        const { viewAllDepartments } = require('./helper/viewAllDepartments');
         viewAllDepartments(db, promptUser);
         break;
       case 'View all roles':
-        const { viewAllRoles } = require('./helper/viewAllRoles');
         viewAllRoles(db, promptUser);
         break;
       case 'View all employees':
-        const { viewAllEmployees } = require('./helper/viewAllEmployees');
         viewAllEmployees(db, promptUser);
         break;
       case 'Add a department':
-        const { addDepartment } = require('./helper/addDepartment');
         addDepartment(db, promptUser);
         break;
       case 'Add a role':
-        const { addRole } = require('./helper/addRole');
         addRole(db, promptUser);
         break;
       case 'Add an employee':
-        const { addEmployee } = require('./helper/addEmployee');
         addEmployee(db, promptUser);
         break;
       case 'Update an employee"s role':
-        const { updateEmployeeRole } = require('./helper/updateEmployeeRole');
         updateEmployeeRole(db, promptUser);
         break;
       case 'View employees by department':
-        const { viewEmployeesByDepartment } = require('./helper/viewEmployeesByDepartment');
         viewEmployeesByDepartment(db, promptUser);
         break;        
       case 'View employees by manager':
-        const { viewEmployeesByManager } = require('./helper/viewEmployeesByManager');
         viewEmployeesByManager(db, promptUser);
         break;        
       case 'Delete a department':
-        const { deleteDepartment } = require('./helper/deleteDepartment');
         deleteDepartment(db, promptUser);
         break;
       case 'Delete a role':
-        const { deleteRole } = require('./helper/deleteRole');
         deleteRole(db, promptUser);
         break;
       case 'Delete an employee':
-        const { deleteEmployee } = require('./helper/deleteEmployee');
         deleteEmployee(db, promptUser);
         break;
       case 'View the total budget of a department':
-        const { viewDepartmentBudget } = require('./helper/viewDepartmentBudget');
         viewDepartmentBudget(db, promptUser);
         break;
       case 'Exit':
