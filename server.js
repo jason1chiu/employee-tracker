@@ -88,7 +88,8 @@ const promptUser = () => {
         deleteRole(db, promptUser);
         break;
       case 'Delete an employee':
-        deleteEmployee();
+        const { deleteEmployee } = require('./helper/deleteEmployee');
+        deleteEmployee(db, promptUser);
         break;
       case 'View the total budget of a department':
         viewDepartmentBudget();
