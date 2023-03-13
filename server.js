@@ -84,7 +84,8 @@ const promptUser = () => {
         deleteDepartment(db, promptUser);
         break;
       case 'Delete a role':
-        deleteRole();
+        const { deleteRole } = require('./helper/deleteRole');
+        deleteRole(db, promptUser);
         break;
       case 'Delete an employee':
         deleteEmployee();
