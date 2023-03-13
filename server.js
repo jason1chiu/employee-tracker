@@ -76,8 +76,9 @@ const promptUser = () => {
         viewEmployeesByDepartment(db, promptUser);
         break;        
       case 'View employees by manager':
-        viewEmployeesByManager();
-        break;
+        const { viewEmployeesByManager } = require('./helper/viewEmployeesByManager');
+        viewEmployeesByManager(db, promptUser);
+        break;        
       case 'Delete a department':
         deleteDepartment();
         break;
