@@ -64,7 +64,8 @@ const promptUser = () => {
         addRole(db, promptUser);
         break;
       case 'Add an employee':
-        addEmployee();
+        const { addEmployee } = require('./helper/addEmployee');
+        addEmployee(db, promptUser);
         break;
       case 'Update an employee"s role':
         updateEmployeeRole();
