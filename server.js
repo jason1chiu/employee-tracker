@@ -92,7 +92,8 @@ const promptUser = () => {
         deleteEmployee(db, promptUser);
         break;
       case 'View the total budget of a department':
-        viewDepartmentBudget();
+        const { viewDepartmentBudget } = require('./helper/viewDepartmentBudget');
+        viewDepartmentBudget(db, promptUser);
         break;
       case 'Exit':
         console.log('Goodbye!');
