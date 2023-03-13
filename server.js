@@ -5,20 +5,20 @@ const mysql = require('mysql2');
 const express = require('express');
 
 // import helper functions
-const { viewAllDepartments } = require('./helper/viewAllDepartments');
-const { viewAllRoles } = require('./helper/viewAllRoles');
-const { viewAllEmployees } = require('./helper/viewAllEmployees');
-const { addDepartment } = require('./helper/addDepartment');
-const { addRole } = require('./helper/addRole');
-const { addEmployee } = require('./helper/addEmployee');
-const { updateEmployeeRole } = require('./helper/updateEmployeeRole');
-const { updateEmployeeManager } = require('./helper/updateEmployeeManager');
-const { viewEmployeesByDepartment } = require('./helper/viewEmployeesByDepartment');
-const { viewEmployeesByManager } = require('./helper/viewEmployeesByManager');
-const { deleteDepartment } = require('./helper/deleteDepartment');
-const { deleteRole } = require('./helper/deleteRole');
-const { deleteEmployee } = require('./helper/deleteEmployee');
-const { viewDepartmentBudget } = require('./helper/viewDepartmentBudget');
+const { viewAllDepartments } = require('./helper/view/viewAllDepartments');
+const { viewAllRoles } = require('./helper/view/viewAllRoles');
+const { viewAllEmployees } = require('./helper/view/viewAllEmployees');
+const { addDepartment } = require('./helper/add/addDepartment');
+const { addRole } = require('./helper/add/addRole');
+const { addEmployee } = require('./helper/add/addEmployee');
+const { updateEmployeeRole } = require('./helper/update/updateEmployeeRole');
+const { updateEmployeeManager } = require('./helper/update/updateEmployeeManager');
+const { viewEmployeesByDepartment } = require('./helper/view/viewEmployeesByDepartment');
+const { viewEmployeesByManager } = require('./helper/view/viewEmployeesByManager');
+const { deleteDepartment } = require('./helper/delete/deleteDepartment');
+const { deleteRole } = require('./helper/delete/deleteRole');
+const { deleteEmployee } = require('./helper/delete/deleteEmployee');
+const { viewDepartmentBudget } = require('./helper/view/viewDepartmentBudget');
 
 // set port and create express app
 const PORT = process.env.PORT || 3001;
