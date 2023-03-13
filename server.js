@@ -60,7 +60,8 @@ const promptUser = () => {
         addDepartment(db, promptUser);
         break;
       case 'Add a role':
-        addRole();
+        const { addRole } = require('./helper/addRole');
+        addRole(db, promptUser);
         break;
       case 'Add an employee':
         addEmployee();
