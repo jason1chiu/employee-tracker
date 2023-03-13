@@ -14,6 +14,9 @@ const updateEmployeeRole = (db, promptUser) => {
   db.query(sql, (err, results) => {
     if (err) throw err;
 
+    // Filter out any null roles
+    const roles = results.filter(result => result.role_id !== null);
+
     // Use inquirer to prompt the user to choose an employee to update and select a new role for them
     inquirer.prompt([
       {
@@ -31,7 +34,7 @@ const updateEmployeeRole = (db, promptUser) => {
         type: 'list',
         name: 'roleId',
         message: 'Select the new role for the employee:',
-        choices: results.map(role => {
+        choices: roles.map(role => {
           return {
             name: `${role.role_title}`,
             value: role.role_id

@@ -22,6 +22,12 @@ const deleteEmployee = (db, promptUser) => {
         name: 'employee',
         message: 'Which employee would you like to delete?',
         choices: employeeList
+      },
+      {
+        type: 'confirm',
+        name: 'confirm',
+        message: 'Are you sure you want to delete this employee?',
+        default: false
       }
     ]).then(answers => {
       // Find the selected employee in the employees array by their full name

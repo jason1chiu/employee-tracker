@@ -25,12 +25,12 @@ const deleteDepartment = (db, promptUser) => {
       },
       {
         type: 'confirm',
-        name: 'confirmDelete',
+        name: 'confirm',
         message: 'Are you sure you want to delete this department and all of its associated roles and employees? This action cannot be undone.',
         default: false
       }
     ]).then(answers => {
-      if (answers.confirmDelete) {
+      if (answers.confirm) {
         // If the user confirms the delete action, execute the SQL statement with the chosen department ID as a parameter to delete the department from the database
         db.query(sql, [answers.departmentId], (err, result) => {
           if (err) throw err;
