@@ -2,20 +2,22 @@
 const inquirer = require('inquirer');
 
 // Define a function called deleteRole that takes two arguments: db (database connection object) and promptUser (a function to prompt the user for more actions)
-const deleteRole = (db, promptUser) => {
+const deleteRole = async (db, promptUser) => {
   // Create a SQL statement to delete a role from the database using a role ID as a parameter
   const sql = `DELETE FROM roles WHERE id = ?`;
   // Create an empty array to store the list of roles
   const roleList = [];
 
-  // Retrieve the list of roles from the database
-  db.query(`SELECT * FROM roles`, (err, roles) => {
-    if (err) throw err;
+  try {
+    // Retrieve the list of roles from the database using MySQL2 .promise() function
+    const [roles] = await db.promise().query(`SELECT * FROM roles`);
     // Add each role's title to the roleList array
-    roleList.push(...roles.map(role => role.title));
+    roles.forEach(role => {
+      roleList.push(role.title);
+    });
 
     // Use inquirer to prompt the user to choose a role to delete
-    inquirer.prompt([
+    const answers = await inquirer.prompt([
       {
         type: 'list',
         name: 'role',
@@ -28,22 +30,25 @@ const deleteRole = (db, promptUser) => {
         message: 'Are you sure you want to delete this role?',
         default: false
       }
-    ]).then(answers => {
-      // Find the selected role in the roles array by its title, and get its ID
-      const roleId = roles.find(role => role.title === answers.role).id;
+    ]);
 
-      // Execute the SQL statement with the selected role's ID as a parameter to delete the role from the database
-      db.query(sql, [roleId], (err, result) => {
-        if (err) throw err;
-        // Log a message to the console confirming the deletion
-        console.log("\n-----------------------------------------\n");
-        console.log(`Role "${answers.role}" has been deleted.`);
-        console.log("\n-----------------------------------------\n");
-        // Call the promptUser function to prompt the user for more actions
-        promptUser();
-      });
-    });
-  });
+    // Find the selected role in the roles array by its title, and get its ID
+    const roleId = roles.find(role => role.title === answers.role).id;
+
+    if (answers.confirm) {
+      // Execute the SQL statement with the selected role's ID as a parameter to delete the role from the database using MySQL2 .promise() function
+      await db.promise().query(sql, [roleId]);
+      // Log a message to the console confirming the deletion
+      console.log("\n-----------------------------------------\n");
+      console.log(`Role "${answers.role}" has been deleted.`);
+      console.log("\n-----------------------------------------\n");
+    }
+  } catch (err) {
+    console.log(err);
+  } finally {
+    // Call the promptUser function to prompt the user for more actions
+    promptUser();
+  }
 };
 
 // Export the deleteRole function so it can be used in other modules

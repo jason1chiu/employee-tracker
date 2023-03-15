@@ -20,14 +20,6 @@ const { deleteRole } = require('./helper/delete/deleteRole');
 const { deleteEmployee } = require('./helper/delete/deleteEmployee');
 const { viewDepartmentBudget } = require('./helper/view/viewDepartmentBudget');
 
-// set port and create express app
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// set up middleware for handling url encoded and json data
-app.use(express.urlencoded({extended: false}));
-app.use(express.json());
-
 // create connection to MySQL database
 const db = mysql.createConnection(
   {
@@ -118,8 +110,3 @@ const promptUser = () => {
 };
 
 promptUser();
-
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-  res.status(404).end();
-});

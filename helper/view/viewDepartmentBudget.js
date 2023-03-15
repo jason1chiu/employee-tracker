@@ -15,30 +15,35 @@ const viewDepartmentBudget = (db, promptUser) => {
   const departmentList = [];
 
   // Retrieve the list of departments from the database and populate the departmentList array with their names
-  db.query(`SELECT * FROM departments`, (err, departments) => {
-    if (err) throw err;
-    departmentList.push(...departments.map(department => department.name));
+  db.promise().query(`SELECT * FROM departments`)
+    .then(([departments]) => {
+      departmentList.push(...departments.map(department => department.name));
 
-    // Prompt the user to select a department from the departmentList array
-    inquirer.prompt([
-      {
-        type: 'list',
-        name: 'department',
-        message: 'Which department would you like to view the budget for?',
-        choices: departmentList
-      }
-    ]).then(answers => {
+      // Prompt the user to select a department from the departmentList array
+      return inquirer.prompt([
+        {
+          type: 'list',
+          name: 'department',
+          message: 'Which department would you like to view the budget for?',
+          choices: departmentList
+        }
+      ]);
+    })
+    .then(answers => {
       // Execute the SQL statement with the selected department name to retrieve the total budget for that department
-      db.query(sql, [answers.department], (err, results) => {
-        if (err) throw err;
-        // Log the results to the console in a table format using console.table
-        console.log("\n-----------------------------------------\n");
-        console.table(results);
-        // Call the promptUser function to prompt the user for more actions
-        promptUser();
-      });
+      return db.promise().query(sql, [answers.department]);
+    })
+    .then(([results]) => {
+      // Log the results to the console in a table format using console.table
+      console.log("\n-----------------------------------------\n");
+      console.table(results);
+      // Call the promptUser function to prompt the user for more actions
+      promptUser();
+    })
+    .catch(err => {
+      console.error(err);
+      promptUser();
     });
-  });
 }
 
 // Export the viewDepartmentBudget function so it can be used in other modules
