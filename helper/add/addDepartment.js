@@ -1,11 +1,14 @@
 // Import the inquirer library
 const inquirer = require('inquirer');
 
+// Import the MySQL2 package
+const mysql = require('mysql2');
+
 // Define the function to delete a department from the database
-const addDepartment = (db, promptUser) => {
+const addDepartment = async (db, promptUser) => {
 
   // Prompt user to enter information for new department
-  inquirer.prompt([
+  const answers = await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
@@ -19,24 +22,25 @@ const addDepartment = (db, promptUser) => {
         return true;
       }
     }
-  ]).then(answers => {
-    // Create SQL query string to delete department with a specific ID
-    const sql = `INSERT INTO departments (name) VALUES (?)`;
+  ]);
 
+  // Create SQL query string to delete department with a specific ID
+  const sql = `INSERT INTO departments (name) VALUES (?)`;
+
+  try {
     // Execute the SQL statement with the user's input as a parameter
-    db.query(sql, [answers.name], function (err, result) {
+    const [results] = await db.promise().query(sql, [answers.name]);
 
-      // If there is an error, throw it
-      if (err) throw err;
+    // Log a message to the console with the name of the new department and its corresponding ID
+    console.log("\n-----------------------------------------\n");
+    console.log(`${answers.name} department has been added with ID ${results.insertId}.`);
+  } catch (err) {
+    // If there is an error, throw it
+    throw err;
+  }
 
-      // Log a message to the console with the name of the new department and its corresponding ID
-      console.log("\n-----------------------------------------\n");
-      console.log(`${answers.name} department has been added with ID ${result.insertId}.`);
-      
-      // Call the promptUser function to prompt the user for more actions
-      promptUser();
-    })
-  })
+  // Call the promptUser function to prompt the user for more actions
+  promptUser();
 };
 
 // Export the addDepartment function so it can be used in other modules

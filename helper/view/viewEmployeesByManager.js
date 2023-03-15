@@ -17,31 +17,34 @@ const viewEmployeesByManager = (db, promptUser) => {
   const managerList = [];
 
   // Retrieve the list of managers from the database and populate the managerList array with their names
-  db.query(`SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS manager_name FROM employees e JOIN employees m ON m.id = e.manager_id ORDER BY manager_name`, (err, managers) => {
-    if (err) throw err;
-    managerList.push(...managers.map(manager => manager.manager_name));
+  db.promise().query(`SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS manager_name FROM employees e JOIN employees m ON m.id = e.manager_id ORDER BY manager_name`)
+    .then(([managers]) => {
+      managerList.push(...managers.map(manager => manager.manager_name));
 
-    // Prompt the user to select a manager from the managerList array
-    inquirer.prompt([
-      {
-        type: 'list',
-        name: 'managerName',
-        message: 'Which manager would you like to view?',
-        choices: managerList
-      }
-    ]).then(answers => {
+      // Prompt the user to select a manager from the managerList array
+      return inquirer.prompt([
+        {
+          type: 'list',
+          name: 'managerName',
+          message: 'Which manager would you like to view?',
+          choices: managerList
+        }
+      ]);
+    })
+    .then(answers => {
       // Execute the SQL statement with the selected manager name to retrieve all employees, their corresponding job titles, departments, salaries, and manager names under that manager
-      db.query(sql, [answers.managerName], (err, results) => {
-        if (err) throw err;
-
-        // Log the results to the console in a table format using console.table
-        console.log("\n-----------------------------------------\n");
-        console.table(results);
-        // Call the promptUser function to prompt the user for more actions
-        promptUser();
-      });
+      return db.promise().query(sql, [answers.managerName]);
+    })
+    .then(([results]) => {
+      // Log the results to the console in a table format using console.table
+      console.log("\n-----------------------------------------\n");
+      console.table(results);
+      // Call the promptUser function to prompt the user for more actions
+      promptUser();
+    })
+    .catch(err => {
+      console.log(err);
     });
-  });
 }
 
 // Export the viewEmployeesByManager function so it can be used in other modules

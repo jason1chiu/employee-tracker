@@ -17,39 +17,36 @@ const viewEmployeesByDepartment = (db, promptUser) => {
   const departmentList = [];
 
   // Retrieve the list of departments from the database and populate the departmentList array with their names
-  db.query(`SELECT * FROM departments`, (err, departments) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
+  db.promise().query(`SELECT * FROM departments`)
+    .then(([departments]) => {
+      departmentList.push(...departments.map(department => department.name));
 
-    departmentList.push(...departments.map(department => department.name));
-
-    // Prompt the user to select a department from the departmentList array
-    inquirer.prompt([
-      {
-        type: 'list',
-        name: 'department',
-        message: 'Which department would you like to view?',
-        choices: departmentList
-      }
-    ]).then(answers => {
-      // Execute the SQL statement with the selected department name to retrieve all employees, their corresponding job titles, departments, salaries, and manager names from that department
-      db.query(sql, [answers.department], (err, results) => {
-        if (err) {
-          console.log(err);
-          return;
+      // Prompt the user to select a department from the departmentList array
+      return inquirer.prompt([
+        {
+          type: 'list',
+          name: 'department',
+          message: 'Which department would you like to view?',
+          choices: departmentList
         }
-
-        // Log the results to the console in a table format using console.table
-        console.log("\n-----------------------------------------\n");
-        console.table(results);
-        console.log("\n-----------------------------------------\n");
-        // Call the promptUser function to prompt the user for more actions
-        promptUser();
-      });
+      ]);
+    })
+    .then(answers => {
+      // Execute the SQL statement with the selected department name to retrieve all employees, their corresponding job titles, departments, salaries, and manager names from that department
+      return db.promise().query(sql, [answers.department]);
+    })
+    .then(([results]) => {
+      // Log the results to the console in a table format using console.table
+      console.log("\n-----------------------------------------\n");
+      console.table(results);
+      console.log("\n-----------------------------------------\n");
+      // Call the promptUser function to prompt the user for more actions
+      promptUser();
+    })
+    .catch(err => {
+      console.log(err);
+      promptUser();
     });
-  });
 };
 
 // Export the viewEmployeesByDepartment function so it can be used in other modules
