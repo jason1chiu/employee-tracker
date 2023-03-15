@@ -19,8 +19,15 @@ const { deleteRole } = require('./helper/delete/deleteRole');
 const { deleteEmployee } = require('./helper/delete/deleteEmployee');
 const { viewDepartmentBudget } = require('./helper/view/viewDepartmentBudget');
 
-const config = require('./config');
-const db = mysql.createConnection(config.dbConfig);
+// create connection to MySQL database
+const db = mysql.createConnection(
+  {
+    host: '127.0.0.1',
+    user: 'root',
+    password: '',
+    database: 'employees_db',
+  }
+);
 
 // prompt user for action to perform
 const promptUser = () => {
