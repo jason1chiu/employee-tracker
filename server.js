@@ -2,6 +2,7 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const mysql = require('mysql2');
+const db = require('./config/connection');
 
 // import helper functions
 const { viewAllDepartments } = require('./helper/view/viewAllDepartments');
@@ -20,14 +21,9 @@ const { deleteEmployee } = require('./helper/delete/deleteEmployee');
 const { viewDepartmentBudget } = require('./helper/view/viewDepartmentBudget');
 
 // create connection to MySQL database
-const db = mysql.createConnection(
-  {
-    host: '127.0.0.1',
-    user: 'root',
-    password: '',
-    database: 'employees_db',
-  }
-);
+db.connect((err) => {
+  if (err) throw err;
+});
 
 // prompt user for action to perform
 const promptUser = () => {
