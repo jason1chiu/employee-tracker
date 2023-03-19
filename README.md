@@ -33,6 +33,8 @@ None
 3. [npm console.table](https://www.npmjs.com/package/console.table)
 4. [npm mysql2](https://www.npmjs.com/package/mysql2)
 5. [MySQL](https://dev.mysql.com/downloads/shell/)
+6. [npm dotenv](https://www.npmjs.com/package/dotenv)
+7. [npm express](https://www.npmjs.com/package/express)
 
 
 ### Tutorials
